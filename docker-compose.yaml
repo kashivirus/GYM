@@ -1,0 +1,50 @@
+version: "3"
+
+services:
+  frontend:
+    build:
+      context: "./client"
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    container_name: react_container
+
+    networks:
+      - mern-stack-network
+    volumes:
+      - ./client:/app
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: "./server"
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    container_name: express_container
+
+    networks:
+      - mern-stack-network
+    volumes:
+      - ./server:/app
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    container_name: mongo-container
+
+    networks:
+      - mern-stack-network
+    volumes:
+      - mongoData:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+
+networks:
+  mern-stack-network:
+volumes:
+  mongoData:
